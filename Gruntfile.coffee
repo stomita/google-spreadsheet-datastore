@@ -57,6 +57,5 @@ module.exports = (grunt) ->
       all:
         src: ["build/*"]
 
-  grunt.registerTask "test", ["build"]
   grunt.registerTask "build", ["coffee", "copy"]
   grunt.registerTask "default", ["build"]

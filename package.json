@@ -6,13 +6,13 @@
     "test": "test"
   },
   "scripts": {
+    "pretest": "grunt build",
     "test": "mocha ./build/test/*.test.js -R spec --require intelli-espower-loader"
   },
-  "main": "build/sheet.js",
-  "author": "",
+  "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "edit-google-spreadsheet": "^0.2.5",
+    "edit-google-spreadsheet": "^0.2.6",
     "q": "^1.0.1",
     "source-map-support": "^0.2.5",
     "request": "^2.34.0"
