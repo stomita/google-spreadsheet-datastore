@@ -20,6 +20,7 @@
     "pretest": "grunt build",
     "test": "mocha ./build/test/*.test.js -R spec --require intelli-espower-loader"
   },
+  "main": "build/lib/sheet.js",
   "dependencies": {
     "edit-google-spreadsheet": "^0.2.6",
     "q": "^1.0.1",
