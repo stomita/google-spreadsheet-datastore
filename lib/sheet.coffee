@@ -2,7 +2,7 @@ require('source-map-support').install()
 
 Q = require "q"
 Spreadsheet = require "edit-google-spreadsheet"
-TokenStore = require "./token-store"
+Client = require "./client"
 
 lazyPromise = (fn) ->
   deferred = Q.defer()
@@ -19,31 +19,33 @@ lazyPromise = (fn) ->
   promise
 
 
+###
+#
+###
 class Sheet
 
   constructor: (@config={}) ->
-    @tokenStore = TokenStore.get "google"
+    client = new Client(@config.client || "google", @config.storage)
+    @tokenStore = client.getTokenStore(@config.uid)
     @spreadsheet = lazyPromise =>
       @tokenStore.load(true).then (tokens) =>
-        Q.ninvoke(Spreadsheet, "load", 
-          spreadsheetId: @config.spreadsheetId
-          worksheetId: @config.worksheetId
-          accessToken:
-            type: 'Bearer'
-            token: tokens.access_token
-        )
+        Q.nfcall (cb) =>
+          Spreadsheet.load
+            spreadsheetId: @config.spreadsheetId
+            worksheetId: @config.worksheetId
+            accessToken:
+              type: 'Bearer'
+              token: tokens.access_token
+          , cb
     @resetData()
 
   resetData: ->
     @rawRows = lazyPromise =>
       @spreadsheet.then (ss) ->
-        Q.nfcall(
-          (cb) -> 
-            ss.receive
-              getValues: true
-            , (err, rows) -> 
-              cb(err, rows)
-        )
+        Q.nfcall (cb) -> 
+          ss.receive 
+            getValues: true
+          , cb
 
     @range = lazyPromise =>
       @rawRows.then (rawRows) ->
@@ -125,23 +127,25 @@ class Sheet
       row
 
   toAbsolute: (row, offset = {}) ->
-    Q.all([ @range, row ]).then (results) =>
-      [ range, row ] = results
-      absrow = {}
-      yindex = range.top + (offset.y || 0) + 1
-      xindex = range.left + (offset.x || 0) + 1
-      absrow[yindex] = {}
-      absrow[yindex][xindex] = [ row ]
-      absrow
+    Q.all [ @range, row ]
+      .then (results) =>
+        [ range, row ] = results
+        absrow = {}
+        yindex = range.top + (offset.y || 0) + 1
+        xindex = range.left + (offset.x || 0) + 1
+        absrow[yindex] = {}
+        absrow[yindex][xindex] = [ row ]
+        absrow
 
   indexOf: (key) ->
     @index.then (index) -> index[key]
 
   findByKey: (key) ->
-    Q.all([ @rows, @indexOf(key) ]).then (results) =>
-      [ rows, index ] = results
-      row = rows[index]
-      if row then @toRecord row else null
+    Q.all [ @rows, @indexOf(key) ]
+      .then (results) =>
+        [ rows, index ] = results
+        row = rows[index]
+        if row then @toRecord row else null
 
   findOne: (conditions={}) ->
     @find(conditions, { limit: 1 })
@@ -150,18 +154,19 @@ class Sheet
   find: (conditions={}, options={}) ->
     offset = options.offset || 0
     limit = options.limit || 100
-    Q.all([ @headerMap, @rows ]).then (results) =>
-      [ headerMap, rows ] = results
-      rows.filter (row) ->
-        valid = true
-        for prop, value of conditions
-          propIndex = headerMap[prop]
-          if propIndex >= 0 && row[propIndex] != value
-            valid = false
-            break
-        valid
-      .slice(offset, offset + limit)
-      .map (row) => @toRecord row
+    Q.all [ @headerMap, @rows ]
+      .then (results) =>
+        [ headerMap, rows ] = results
+        rows.filter (row) ->
+          valid = true
+          for prop, value of conditions
+            propIndex = headerMap[prop]
+            if propIndex >= 0 && row[propIndex] != value
+              valid = false
+              break
+          valid
+        .slice(offset, offset + limit)
+        .map (row) => @toRecord row
 
 module.exports = Sheet
 

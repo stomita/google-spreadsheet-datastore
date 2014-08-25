@@ -13,12 +13,8 @@
     "type": "git",
     "url": "git://github.com/stomita/google-spreadsheet-datastore.git"
   },
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "pretest": "grunt build",
-    "test": "mocha ./build/test/*.test.js -R spec --require intelli-espower-loader"
+    "test": "mocha ./test/*.test.coffee -R spec --require espower-coffee/guess"
   },
   "main": "build/lib/sheet.js",
   "dependencies": {
@@ -35,9 +31,10 @@
     "grunt-contrib-copy": "^0.5.0",
     "grunt-espower": "^0.8.0",
     "grunt-contrib-coffee": "^0.10.1",
-    "intelli-espower-loader": "^0.3.0",
     "espower-loader": "^0.8.0",
     "load-grunt-tasks": "^0.6.0",
-    "mocha": "^1.21.4"
+    "mocha": "^1.21.4",
+    "coffee-script": "^1.7.1",
+    "espower-coffee": "^0.8.0"
   }
 }

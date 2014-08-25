@@ -1,14 +1,17 @@
 assert = require "power-assert"
 
-TokenStore = require "../lib/token-store"
-
-TokenStore.basePath = "#{__dirname}/creds"
+Client = require "../lib/client"
 
 describe "token store", ->
+  @timeout 20000
 
   it "should load tokens", (done) ->
-    @timeout 20000
-    ts = TokenStore.get("google")
+    client = new Client("google")
+    ts = client.getTokenStore()
+    ts.set
+      access_token: process.env.GOOGLE_API_ACCESS_TOKEN
+      refresh_token: process.env.GOOGLE_API_REFRESH_TOKEN
+    ts.store()
     ts.load(true).then (tokens) ->
       assert.ok(tokens.access_token)
       done()
