@@ -36,7 +36,7 @@ class Sheet
             accessToken:
               type: 'Bearer'
               token: tokens.access_token
-          , cb
+          , (err, res) -> cb(err, res)
     @resetData()
 
   resetData: ->
@@ -45,7 +45,7 @@ class Sheet
         Q.nfcall (cb) -> 
           ss.receive 
             getValues: true
-          , cb
+          , (err, res) -> cb(err, res)
 
     @range = lazyPromise =>
       @rawRows.then (rawRows) ->
