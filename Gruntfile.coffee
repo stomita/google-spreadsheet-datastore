@@ -39,6 +39,15 @@ module.exports = (grunt) ->
       options:
         sourceMap: true
 
+    espower:
+      test:
+        files: [
+          expand: true
+          cwd: "build/test/"
+          src: ["**/*.test.js"]
+          dest: "build/test-powered"
+        ]
+
     copy:
       dist:
         files: [
@@ -57,5 +66,5 @@ module.exports = (grunt) ->
       all:
         src: ["build/*"]
 
-  grunt.registerTask "build", ["coffee", "copy"]
+  grunt.registerTask "build", ["coffee", "espower", "copy"]
   grunt.registerTask "default", ["build"]
