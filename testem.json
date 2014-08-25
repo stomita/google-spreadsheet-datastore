@@ -1,0 +1,15 @@
+{
+  "framework": "mocha",
+  "before_tests": "grunt test",
+  "src_files": [
+    "src/**/*.coffee",
+    "test/**/*.test.coffee"
+  ],
+  "launch_in_ci": [ "node" ],
+  "launch_in_dev": [ "node" ],
+  "launchers": {
+    "node": {
+      "command": "npm test"
+    }
+  }
+}

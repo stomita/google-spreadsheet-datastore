@@ -1,0 +1,32 @@
+{
+  "name": "google-spreadsheet-datastore",
+  "version": "0.0.0",
+  "description": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha ./build/test/*.test.js -R spec --require intelli-espower-loader"
+  },
+  "main": "build/sheet.js",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "edit-google-spreadsheet": "^0.2.5",
+    "q": "^1.0.1",
+    "source-map-support": "^0.2.5",
+    "request": "^2.34.0"
+  },
+  "devDependencies": {
+    "grunt-contrib-clean": "^0.5.0",
+    "power-assert": "^0.8.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt": "^0.4.4",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-espower": "^0.8.0",
+    "grunt-contrib-coffee": "^0.10.1",
+    "intelli-espower-loader": "^0.3.0",
+    "espower-loader": "^0.8.0",
+    "load-grunt-tasks": "^0.6.0"
+  }
+}
