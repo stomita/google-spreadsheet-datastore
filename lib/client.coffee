@@ -2,8 +2,8 @@ require('source-map-support').install()
 
 fs = require "fs"
 querystring = require "querystring"
-Q = require "q"
 request = require "request"
+PromiseUtil = require "./promise-util"
 TokenStore = require "./token-store"
 
 ###
@@ -13,16 +13,15 @@ class MemoryStorage
   @tokens = {}
 
   constructor: (@config, @uid) ->
-    console.log @config
     @store(@config.tokens) if @config.tokens
 
   load: ->
     tokens = MemoryStorage.tokens[@config.type + ":" + @uid]
-    Q(tokens)
+    PromiseUtil.resolve(tokens)
 
   store: (tokens) ->
     MemoryStorage.tokens[@config.type + ":" + @uid] = tokens
-    Q(tokens)
+    PromiseUtil.resolve(tokens)
 
 ###
 #
@@ -32,7 +31,7 @@ class FileStorage
 
   load: ->
     filePath = @config.filePath
-    Q.nfcall (cb) ->
+    PromiseUtil.async (cb) ->
       fs.readFile(filePath, cb)
     .then (data) ->
       JSON.parse data
@@ -40,7 +39,7 @@ class FileStorage
   store: (tokens) ->
     filePath = @config.filePath
     data = JSON.stringify(tokens, null, 4)
-    Q.nfcall (cb) ->
+    PromiseUtil.async (cb) ->
       fs.writeFile(filePath, data, "utf-8", cb)
     .then ->
       tokens
@@ -57,7 +56,7 @@ class Client
     @config = require('./config').clients[name]
 
   verify: (accessToken) ->
-    Q.nfcall (cb) =>
+    PromiseUtil.async (cb) =>
       request
         method: "GET"
         url: @config.verify_url + "?access_token=" + accessToken
@@ -66,7 +65,7 @@ class Client
       res.statusCode < 400
 
   refresh: (refreshToken) ->
-    Q.nfcall (cb) =>
+    PromiseUtil.async (cb) =>
       request
         method: "POST"
         url: @config.token_url

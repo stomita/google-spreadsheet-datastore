@@ -1,5 +1,4 @@
-Q = require "q"
-
+PromiseUtil = require "./promise-util"
 
 ###
 #
@@ -9,7 +8,7 @@ class TokenStore
   constructor: (@client, @storage) ->
 
   set: (tokens) ->
-    @tokens = Q(tokens)
+    @tokens = PromiseUtil.resolve(tokens)
 
   reset: ->
     @tokens = null
@@ -23,16 +22,16 @@ class TokenStore
       @tokens.then (tokens) =>
         @storage.store(tokens)
     else
-      Q.reject(new Error "no token information to store")
+      PromiseUtil.reject(new Error "no token information to store")
 
   verify: ->
     if @tokens
       @tokens.then (tokens) =>
         @client.verify tokens.access_token
       .then (verified) =>
-        if verified then @refresh() else @tokens
+        if verified then @tokens else @refresh()
     else
-      Q.reject(new Error "no token information to verify")
+      PromiseUtil.reject(new Error "no token information to verify")
 
   refresh: ->
     @tokens.then (tokens) ->
