@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 fs = require "fs"
 querystring = require "querystring"
 request = require "request"

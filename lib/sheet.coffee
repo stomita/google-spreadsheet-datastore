@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 Spreadsheet = require "edit-google-spreadsheet"
 Client = require "./client"
 PromiseUtil = require "./promise-util"
