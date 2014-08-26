@@ -20,50 +20,34 @@ describe "sheet", ->
     worksheetId: "od6"
     keyIndex: 0
 
-  it "should find sheet data", (done) ->
+  it "should find sheet data", ->
     sheet.find().then (records) ->
       assert.ok(records.length >= 80)
-      done()
-    .fail (err) ->
-      done(err)
 
-  it "should find one record by key", (done) ->
+  it "should find one record by key", ->
     sheet.findByKey("0018000000Yt1ZDAAZ")
       .then (record) ->
         assert.ok record["取引先 ID"] == "0018000000Yt1ZDAAZ"
         assert.ok record["業種"] == "食品卸売"
-        done()
-      .fail (err) ->
-        done(err)
 
-  it "should get metadata of sheet", (done) ->
+  it "should get metadata of sheet", ->
     sheet.metadata()
       .then (metadata) ->
         assert.ok(metadata.rowCount > 0)
         assert.ok(metadata.colCount > 0)
-        done()
-      .fail (err) ->
-        done(err)
 
-  it "should update record in the sheet", (done) ->
+  it "should update record in the sheet", ->
     sheet.update("0018000000Yt1Z4AAJ",
       "取引先名": "変更済み取引先"
       "従業員数": 2000
-    ).then (res) ->
-      done()
-    .fail (err) ->
-      done(err)
-
+    )
 
 ###
-  it "should create new record in the sheet", (done) ->
+  it "should create new record in the sheet", ->
     ts = Date.now()
     sheet.insert(
       "取引先 ID": "test" + ts
       "取引先名": "テスト取引先" + ts
-    ).then (res) ->
-      done()
-    .fail (err) ->
-      done(err)
+    )
 ###
 
