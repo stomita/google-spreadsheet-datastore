@@ -1,6 +1,6 @@
 {
   "name": "google-spreadsheet-datastore",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Manipulate Google Spreadsheet like a mongoDB-like data store",
   "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
   "license": "MIT",
