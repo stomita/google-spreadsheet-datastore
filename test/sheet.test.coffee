@@ -18,7 +18,10 @@ describe "sheet", ->
         refresh_token: process.env.GOOGLE_API_REFRESH_TOKEN
     spreadsheetId: "1ug9clvNQmMou_FWYzV9pCDi5ex5jeEk0g9dJ-aKzXyc"
     worksheetId: "od6"
-    keyIndex: 0
+    keyColumn: "ID"
+    autoGenerateKey: true
+    removedStatusColumn: "IS_DELETED"
+    removedStatus: "Y"
 
   it "should find sheet data", ->
     sheet.find().then (records) ->
@@ -27,27 +30,49 @@ describe "sheet", ->
   it "should find one record by key", ->
     sheet.findByKey("0018000000Yt1ZDAAZ")
       .then (record) ->
-        assert.ok record["取引先 ID"] == "0018000000Yt1ZDAAZ"
+        assert.ok record["ID"] == "0018000000Yt1ZDAAZ"
         assert.ok record["業種"] == "食品卸売"
 
   it "should get metadata of sheet", ->
     sheet.metadata()
       .then (metadata) ->
+        console.log metadata
         assert.ok(metadata.rowCount > 0)
         assert.ok(metadata.colCount > 0)
 
-  it "should update record in the sheet", ->
-    sheet.update("0018000000Yt1Z4AAJ",
-      "取引先名": "変更済み取引先"
-      "従業員数": 2000
-    )
+  newKey = null
 
-###
   it "should create new record in the sheet", ->
-    ts = Date.now()
     sheet.insert(
-      "取引先 ID": "test" + ts
-      "取引先名": "テスト取引先" + ts
+      "会社名": "テスト取引先"
     )
+    .then (ret) ->
+      assert ret.success == true
+      newKey = ret.key
+
+  it "should update record in the sheet", ->
+    sheet.update(newKey,
+      "会社名": "★★★ 変更済み取引先 ★★★"
+      "従業員数": 2500
+    )
+    .then (ret) ->
+      assert.ok ret.success == true
+      assert.ok ret.key == newKey
+    .then ->
+      sheet.findByKey(newKey)
+    .then (record) ->
+      assert.ok record["会社名"] == "★★★ 変更済み取引先 ★★★"
+      assert.ok record["従業員数"] == 2500
+
+  it "should remove created record in the sheet", ->
+    sheet.remove(newKey).then (ret) ->
+      assert.ok ret.success == true
+      assert.ok ret.key == newKey
+    .then ->
+      sheet.findByKey(newKey)
+    .then (record) ->
+      assert.ok record == null
+
+
 ###
 

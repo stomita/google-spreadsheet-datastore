@@ -5,7 +5,9 @@ module.exports =
 
   reject: (err) -> Q.reject(err)
   
-  all: () ->
+  all: (arr) -> Q.all(arr)
+
+  wait: () ->
     args = Array.prototype.slice.call arguments
     fn = args.pop()
     Q.all(args).then (results) ->
