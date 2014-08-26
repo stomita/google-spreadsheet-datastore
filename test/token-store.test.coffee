@@ -6,7 +6,7 @@ describe "token store", ->
   @timeout 20000
 
   it "should load tokens", (done) ->
-    client = new Client("google")
+    client = new Client(name: "google")
     ts = client.getTokenStore()
     ts.set
       access_token: process.env.GOOGLE_API_ACCESS_TOKEN

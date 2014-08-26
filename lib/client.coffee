@@ -50,8 +50,11 @@ class Client
     memory: MemoryStorage
     file: FileStorage
 
-  constructor: (name, @storageConfig={}) ->
+  constructor: (config) ->
+    name = config.name
     @config = require('./config').clients[name]
+    @storageConfig = config.storage || {}
+    @tokenStores = {}
 
   verify: (accessToken) ->
     PromiseUtil.async (cb) =>
@@ -85,6 +88,9 @@ class Client
       tokens
 
   getTokenStore: (uid="default") ->
+    @tokenStores[uid] ||= @createTokenStore(uid)
+
+  createTokenStore: (uid) ->
     Storage = Client.storageClasses[@storageConfig.type] || MemoryStorage
     new TokenStore(@, new Storage(@storageConfig, uid))
 

@@ -1,4 +1,4 @@
-Spreadsheet = require "edit-google-spreadsheet"
+GoogleSpreadsheet = require "edit-google-spreadsheet"
 Client = require "./client"
 PromiseUtil = require "./promise-util"
 
@@ -10,12 +10,16 @@ class Sheet
   @DEFAULT_REMOVED_STATUS = "DELETED"
 
   constructor: (@config={}) ->
-    client = new Client(@config.client || "google", @config.storage)
+    client =
+      if @config.client instanceof Client
+        @config.client
+      else
+        new Client(@config.client)
     @tokenStore = client.getTokenStore(@config.uid)
-    @spreadsheet = PromiseUtil.lazy =>
+    @googleSpreadsheet = PromiseUtil.lazy =>
       @tokenStore.load(true).then (tokens) =>
         PromiseUtil.async (cb) =>
-          Spreadsheet.load
+          GoogleSpreadsheet.load
             spreadsheetId: @config.spreadsheetId
             worksheetId: @config.worksheetId
             accessToken:
@@ -27,7 +31,7 @@ class Sheet
 
   resetData: ->
     @rawRows = PromiseUtil.lazy =>
-      @spreadsheet.then (ss) ->
+      @googleSpreadsheet.then (ss) ->
         PromiseUtil.async (cb) =>
           ss.receive { getValues: true }, cb
 
@@ -102,7 +106,7 @@ class Sheet
 
 
   metadata: ->
-    @spreadsheet.then (ss) =>
+    @googleSpreadsheet.then (ss) =>
       PromiseUtil.async (cb) ->
         ss.metadata(cb)
 
@@ -145,7 +149,7 @@ class Sheet
       )
 
   insert: (record) ->
-    PromiseUtil.wait @spreadsheet, @keyColumn, @count({}, { includeRemoved: true }), (ss, keyColumn, offsetY) =>
+    PromiseUtil.wait @googleSpreadsheet, @keyColumn, @count({}, { includeRemoved: true }), (ss, keyColumn, offsetY) =>
       unless keyColumn
         throw new Error "keyColumn is not found either in sheet config or in headers."
       key = record[keyColumn]
@@ -171,7 +175,7 @@ class Sheet
         { success: true, key: key }
 
   update: (key, record) ->
-    PromiseUtil.wait @spreadsheet, @rowIndexOf(key), (ss, offsetY) =>
+    PromiseUtil.wait @googleSpreadsheet, @rowIndexOf(key), (ss, offsetY) =>
       unless offsetY >= 0
         throw new Error "No record found matching the key: #{key}"
       @toAbsolute(@toRow(record), { y: offsetY + 1 }).then (absrow) ->

@@ -7,12 +7,13 @@ describe "sheet", ->
   @timeout 20000
 
   sheet = new Sheet
-    client: "google"
-    storage:
-      type: "memory"
-      tokens:
-        access_token: process.env.GOOGLE_API_ACCESS_TOKEN
-        refresh_token: process.env.GOOGLE_API_REFRESH_TOKEN
+    client:
+      name: "google"
+      storage:
+        type: "memory"
+        tokens:
+          access_token: process.env.GOOGLE_API_ACCESS_TOKEN
+          refresh_token: process.env.GOOGLE_API_REFRESH_TOKEN
     spreadsheetId: "1ug9clvNQmMou_FWYzV9pCDi5ex5jeEk0g9dJ-aKzXyc"
     worksheetId: "od6"
     keyColumn: "ID"
