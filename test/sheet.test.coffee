@@ -74,5 +74,3 @@ describe "sheet", ->
       assert.ok record == null
 
 
-###
-
