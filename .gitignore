@@ -27,7 +27,7 @@ node_modules
 /assets/vendor
 
 # Extension build result
-/build
+/build/test*
 
 # Environment variables for foreman process
 .env
