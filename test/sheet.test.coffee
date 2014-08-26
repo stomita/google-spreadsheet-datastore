@@ -1,8 +1,5 @@
 assert = require "power-assert"
 
-TokenStore = require "../lib/token-store"
-TokenStore.basePath = "#{__dirname}/creds"
-
 Sheet = require "../lib/sheet"
 
 describe "sheet", ->
@@ -36,7 +33,6 @@ describe "sheet", ->
   it "should get metadata of sheet", ->
     sheet.metadata()
       .then (metadata) ->
-        console.log metadata
         assert.ok(metadata.rowCount > 0)
         assert.ok(metadata.colCount > 0)
 
