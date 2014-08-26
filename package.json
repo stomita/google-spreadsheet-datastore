@@ -18,7 +18,7 @@
   },
   "main": "build/lib/sheet.js",
   "dependencies": {
-    "edit-google-spreadsheet": "^0.2.6",
+    "edit-google-spreadsheet": "0.2.6",
     "q": "^1.0.1",
     "source-map-support": "^0.2.7",
     "request": "^2.21.0"
