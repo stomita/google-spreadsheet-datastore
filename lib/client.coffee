@@ -57,6 +57,7 @@ class Client
     @tokenStores = {}
 
   verify: (accessToken) ->
+    return PromiseUtil.resolve(false) unless accessToken
     PromiseUtil.async (cb) =>
       request
         method: "GET"
